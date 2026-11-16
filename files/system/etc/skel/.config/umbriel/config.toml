@@ -1,0 +1,21 @@
+# Launch Noctalia desktop shell and Polkit authentication agent on session start
+exec-once = [
+  "noctalia",
+  "/usr/libexec/polkit-gnome-authentication-agent-1"
+]
+
+[input.touchpad]
+tap = true
+natural_scroll = true
+
+[[bind]]
+mods = ["Mod"]
+key = "Return"
+action = "spawn"
+args = ["kitty"]
+
+[[bind]]
+mods = ["Mod"]
+key = "Space"
+action = "spawn"
+args = ["noctalia", "msg", "launcher", "toggle"]

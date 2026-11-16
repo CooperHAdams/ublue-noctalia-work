@@ -1,45 +1,102 @@
----
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
 name: ublue-noctalia-work
-# description will be included in the image's metadata
-description: This is my personal OS image.
+description: Universal Blue work laptop image with Umbriel, Noctalia Shell, and Noctalia Greeter
+base-image: ghcr.io/ublue-os/base-main
+image-version: latest
 
-# the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: latest # You can pin to a specific version of Fedora as well
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
-  - type: files
-    files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-
   - type: dnf
     repos:
       copr:
-        - atim/starship
+        - ldivizio/desktop
     install:
       packages:
-        - micro
-        - starship
-    remove:
-      packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        # 1. Compositor, Desktop Shell & Noctalia Greeter
+        - umbriel
+        - noctalia
+        - noctalia-greeter
+        - greetd
+        - cage
+
+        # 2. Core Wayland Laptop Stack
+        - xdg-desktop-portal
+        - xdg-desktop-portal-gtk
+        - xorg-x11-server-Xwayland
+        - polkit-gnome
+        - kitty
+        - thunar
+        - thunar-volman
+        - gvfs
+        - gvfs-mtp
+        - file-roller
+        - wl-clipboard
+        - grim
+        - slurp
+        - brightnessctl
+        - playerctl
+        - power-profiles-daemon
+        - pipewire
+        - wireplumber
+        - pipewire-pulseaudio
+        - bluez
+        - NetworkManager-wifi
+        - NetworkManager-openvpn
+        - NetworkManager-openconnect
+        - google-noto-sans-fonts
+        - google-noto-emoji-fonts
+        - jetbrains-mono-fonts-all
+
+        # 3. Windows & macOS Interoperability
+        # SMB/CIFS shares (browsing & mounting Windows/Mac network folders)
+        - samba-client
+        - cifs-utils
+        - gvfs-smb
+        # mDNS / Bonjour (.local hostname & AirPrint discovery)
+        - avahi
+        - nss-mdns
+        # Cross-platform external USB/SSD filesystems (exFAT, NTFS, HFS+)
+        - exfatprogs
+        - ntfs-3g
+        - ntfsprogs
+        - hfsplus-tools
+        # Remote Desktop (Windows RDP & macOS Screen Sharing / VNC)
+        - freerdp
+        - remmina
+        - remmina-plugins-rdp
+        - remmina-plugins-vnc
+        # Driverless AirPrint / IPP & Windows shared printing/scanning
+        - cups
+        - cups-filters
+        - system-config-printer
+        - sane-backends
+        - openssh-clients
+
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  - type: script
+    snippets:
+      - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
+
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+        - avahi-daemon.service
+        - cups.service
+        - bluetooth.service
+        - power-profiles-daemon.service
+      disabled:
+        - getty@tty1.service
 
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
+      - scope: system
+        notify: true
+        install:
           - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+          - org.libreoffice.LibreOffice
+          - com.github.tchx84.Flatseal
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: signing
