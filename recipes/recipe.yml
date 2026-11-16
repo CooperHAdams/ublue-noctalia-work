@@ -74,7 +74,7 @@ modules:
       - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
       - "mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell"
       - "mkdir -p /etc/xdg/quickshell/noctalia-greeter && curl -fsSL https://github.com/noctalia-dev/noctalia-greeter/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-greeter"
-      - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/local/bin/noctalia-shell && chmod +x /usr/local/bin/noctalia-shell"
+      - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/bin/noctalia-shell && chmod +x /usr/bin/noctalia-shell"
 
   - type: systemd
     system:
