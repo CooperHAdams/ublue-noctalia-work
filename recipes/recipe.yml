@@ -10,18 +10,17 @@ modules:
         - ldivizio/desktop
     install:
       packages:
-        # 1. Compositor, Desktop Shell & Greeter Dependencies
+        # 1. Compositor, Quickshell Runtime & Greeter
         - umbriel
-        - noctalia-shell
         - quickshell
         - greetd
         - cage
+        - xfce-polkit
 
         # 2. Core Wayland Laptop Stack
         - xdg-desktop-portal
         - xdg-desktop-portal-gtk
         - xorg-x11-server-Xwayland
-        - xfce-polkit
         - kitty
         - thunar
         - thunar-volman
@@ -73,7 +72,9 @@ modules:
   - type: script
     snippets:
       - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
+      - "mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell"
       - "mkdir -p /etc/xdg/quickshell/noctalia-greeter && curl -fsSL https://github.com/noctalia-dev/noctalia-greeter/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-greeter"
+      - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/local/bin/noctalia-shell && chmod +x /usr/local/bin/noctalia-shell"
 
   - type: systemd
     system:
