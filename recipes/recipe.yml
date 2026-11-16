@@ -1,7 +1,7 @@
 name: ublue-noctalia-work
 description: Universal Blue work laptop image with Umbriel, Noctalia Shell, and Noctalia Greeter
 base-image: ghcr.io/ublue-os/base-main
-image-version: latest
+image-version: 44
 
 modules:
   - type: dnf
@@ -10,10 +10,10 @@ modules:
         - ldivizio/desktop
     install:
       packages:
-        # 1. Compositor, Desktop Shell & Noctalia Greeter
+        # 1. Compositor, Desktop Shell & Greeter Dependencies
         - umbriel
-        - noctalia
-        - noctalia-greeter
+        - noctalia-shell
+        - quickshell
         - greetd
         - cage
 
@@ -46,24 +46,19 @@ modules:
         - jetbrains-mono-fonts-all
 
         # 3. Windows & macOS Interoperability
-        # SMB/CIFS shares (browsing & mounting Windows/Mac network folders)
         - samba-client
         - cifs-utils
         - gvfs-smb
-        # mDNS / Bonjour (.local hostname & AirPrint discovery)
         - avahi
         - nss-mdns
-        # Cross-platform external USB/SSD filesystems (exFAT, NTFS, HFS+)
         - exfatprogs
         - ntfs-3g
         - ntfsprogs
         - hfsplus-tools
-        # Remote Desktop (Windows RDP & macOS Screen Sharing / VNC)
         - freerdp
         - remmina
         - remmina-plugins-rdp
         - remmina-plugins-vnc
-        # Driverless AirPrint / IPP & Windows shared printing/scanning
         - cups
         - cups-filters
         - system-config-printer
@@ -78,6 +73,7 @@ modules:
   - type: script
     snippets:
       - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
+      - "mkdir -p /etc/xdg/quickshell/noctalia-greeter && curl -fsSL https://github.com/noctalia-dev/noctalia-greeter/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-greeter"
 
   - type: systemd
     system:
