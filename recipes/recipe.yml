@@ -15,6 +15,7 @@ modules:
         - quickshell
         - greetd
         - cage
+        - seatd
         - xfce-polkit
 
         # 2. Core Wayland Laptop Stack
@@ -75,10 +76,12 @@ modules:
       - "mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell"
       - "mkdir -p /etc/xdg/quickshell/noctalia-greeter && curl -fsSL https://github.com/noctalia-dev/noctalia-greeter/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-greeter"
       - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/bin/noctalia-shell && chmod +x /usr/bin/noctalia-shell"
+      - "usermod -aG seat greetd"
 
   - type: systemd
     system:
       enabled:
+        - seatd.service
         - greetd.service
         - avahi-daemon.service
         - cups.service
