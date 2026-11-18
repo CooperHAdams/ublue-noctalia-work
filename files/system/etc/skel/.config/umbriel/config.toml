@@ -1,4 +1,3 @@
-# Launch Noctalia desktop shell and Polkit authentication agent on session start
 exec-once = [
   "noctalia-shell",
   "/usr/libexec/xfce-polkit"

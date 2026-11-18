@@ -2,5 +2,5 @@
 vt = 1
 
 [default_session]
-command = "env LIBSEAT_BACKEND=seatd cage -s -- qs -p /etc/xdg/quickshell/noctalia-greeter"
+command = "tuigreet --time --remember --remember-session --sessions /usr/share/wayland-sessions"
 user = "greetd"

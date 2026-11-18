@@ -1,5 +1,5 @@
 name: ublue-noctalia-work
-description: Universal Blue work laptop image with Umbriel, Noctalia Shell, and Noctalia Greeter
+description: Universal Blue work laptop image with Umbriel, Noctalia Shell, and tuigreet
 base-image: ghcr.io/ublue-os/base-main
 image-version: 45
 
@@ -8,14 +8,16 @@ modules:
     repos:
       copr:
         - ldivizio/desktop
+    remove:
+      packages:
+        - kmscon
     install:
       packages:
-        # 1. Compositor, Quickshell Runtime & Greeter
+        # 1. Compositor, Quickshell Runtime & Login Greeter
         - umbriel
         - quickshell
         - greetd
-        - cage
-        - seatd
+        - tuigreet
         - xfce-polkit
 
         # 2. Core Wayland Laptop Stack
@@ -73,15 +75,13 @@ modules:
   - type: script
     snippets:
       - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
+      - "ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/autovt@.service"
       - "mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell"
-      - "mkdir -p /etc/xdg/quickshell/noctalia-greeter && curl -fsSL https://github.com/noctalia-dev/noctalia-greeter/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-greeter"
       - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/bin/noctalia-shell && chmod +x /usr/bin/noctalia-shell"
-      - "usermod -aG seat greetd"
 
   - type: systemd
     system:
       enabled:
-        - seatd.service
         - greetd.service
         - avahi-daemon.service
         - cups.service
