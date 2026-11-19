@@ -19,7 +19,6 @@ modules:
         - quickshell
         - greetd
         - tuigreet
-        - --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
         - noctalia-greeter
         - xfce-polkit
 
