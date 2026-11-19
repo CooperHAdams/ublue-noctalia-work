@@ -21,6 +21,8 @@ modules:
         - xfce-polkit
 
         # 2. Core Wayland Laptop Stack
+        - curl
+        - tar
         - xdg-desktop-portal
         - xdg-desktop-portal-gtk
         - xorg-x11-server-Xwayland
@@ -74,9 +76,9 @@ modules:
 
   - type: script
     snippets:
-      - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
+      - "set -e && sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
       - "ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/autovt@.service"
-      - "mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell"
+      - "set -e && mkdir -p /etc/xdg/quickshell/noctalia-shell && curl -fsSL https://github.com/noctalia-dev/noctalia-shell/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C /etc/xdg/quickshell/noctalia-shell && test -f /etc/xdg/quickshell/noctalia-shell/shell.qml"
       - "printf '#!/bin/sh\\nexec qs -p /etc/xdg/quickshell/noctalia-shell \"$@\"\\n' > /usr/bin/noctalia && chmod +x /usr/bin/noctalia && ln -sf /usr/bin/noctalia /usr/bin/noctalia-shell"
 
   - type: systemd
