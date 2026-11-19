@@ -21,6 +21,9 @@ radius = 3
 [input.keyboard]
 numlock_toggle = true
 
+[input.touchpad]
+natural_scroll = true
+
 # ==============================================================================
 # Keybinds
 [keybinds]

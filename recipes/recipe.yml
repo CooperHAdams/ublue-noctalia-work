@@ -53,7 +53,8 @@ modules:
         - podman-compose
         - just
         - fastfetch
-        - starship
+        - powerline
+        - powerline-fonts
         - bash-completion
         - fzf
         - ripgrep
@@ -101,7 +102,15 @@ modules:
     snippets:
       - "sed -i 's/^hosts:.*/hosts:      files myhostname mdns4_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] dns/' /etc/nsswitch.conf"
       - "ln -sf /usr/lib/systemd/system/getty@.service /etc/systemd/system/autovt@.service"
-      - "grep -q 'starship init bash' /etc/bashrc || echo 'eval \"$(starship init bash)\"' >> /etc/bashrc"
+      - |
+        cat << 'EOF' >> /etc/bashrc
+        if [ -f /usr/share/powerline/bash/powerline.sh ]; then
+          powerline-daemon -q
+          POWERLINE_BASH_CONTINUATION=1
+          POWERLINE_BASH_SELECT=1
+          source /usr/share/powerline/bash/powerline.sh
+        fi
+        EOF
 
   - type: systemd
     system:
